@@ -1,0 +1,11 @@
+{
+  "name": "coursechat",
+  "version": "1.0.0",
+  "description": "Real time chat rooms for courses.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "June Oh",
+  "license": "ISC"
+}
