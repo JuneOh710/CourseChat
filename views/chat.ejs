@@ -38,10 +38,14 @@
                 <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
             </form>
         </div>
-    </div>
-    <!-- have "io" as a global variable -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/main.js"></script>
+        <!-- have username as a global variable -->
+        <script>
+            var username = '<%= username %>';
+        </script>
+        <!-- have "io" as a global variable -->
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/main.js"></script>
 </body>
 
 </html>

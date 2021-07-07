@@ -1,7 +1,6 @@
-
-
 const chatForm = document.getElementById('chat-form')
 const socket = io()
+
 // catch the 'message' from the server
 socket.on('message', message => {
     displayMessage(message)
@@ -10,12 +9,13 @@ socket.on('message', message => {
 chatForm.addEventListener('submit', event => {
     // prevent form from submitting
     event.preventDefault()
-    // get the message text
-    const msg = event.target.elements.msg;
-    // send message to server
-    socket.emit('chatMessage', msg.value)
-    msg.value = ''
-    msg.focus()
+    // set msg as [text, username]
+    // where event.target.elements.msg.value is the actual text
+    const msg = [event.target.elements.msg.value, username]
+    socket.emit('chatMessage', msg)
+    // clear message and refocus field
+    event.target.elements.msg.value = ''
+    event.target.elements.msg.focus()
 })
 
 function displayMessage(message) {

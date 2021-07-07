@@ -13,7 +13,9 @@ const __dirname = path.resolve(path.dirname(decodeURI(new URL(import.meta.url).p
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
+app.use(express.urlencoded({ extended: true }));
 
+const botName = '[Bot]';
 
 app.get('/', (req, res) => {
     res.render('index.ejs')
@@ -22,15 +24,14 @@ app.get('/', (req, res) => {
 app.get('/chat', (req, res) => {
     res.render('chat.ejs')
 })
-app.post('/chat', (req, res) => {
-    res.redirect('/chat')
+
+// user requests to join a chat
+app.post('/', (req, res) => {
+    const { username } = req.body;
+    res.render('chat.ejs', { username, botName })
 })
 
 
-
-
-
-const botName = '[Bot]';
 // run when a client connects
 io.on('connection', socket => {
     // handle user connection
@@ -42,7 +43,7 @@ io.on('connection', socket => {
     // handle chatMessage from user
     socket.on('chatMessage', (msg) => {
         // send this message to every user
-        io.emit('message', formatMessage('userrrr', msg))
+        io.emit('message', formatMessage(msg[1], msg[0]))
     })
 
     // handle user disconnecting
@@ -51,6 +52,7 @@ io.on('connection', socket => {
         io.emit('message', formatMessage(botName, 'a user has left the chat'))
     })
 })
+
 
 
 
