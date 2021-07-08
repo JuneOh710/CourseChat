@@ -33,12 +33,25 @@ function displayMessage(message) {
     const chatMessages = document.querySelector('.chat-messages')
     const newChatMessage = document.createElement('div')
     newChatMessage.classList.add('message')
-    newChatMessage.innerHTML = `
-    <p class="meta">${message.username} <span>${message.time}</span></p>
+    if (message.username === username) {
+        newChatMessage.classList.add('own-message')
+    }
+    if (message.username === '[Bot]') {
+        newChatMessage.classList.add('bot-message')
+        newChatMessage.innerHTML = `
                     <p class="text">
                         ${message.text}
                     </p>
                     `
+    }
+    else {
+        newChatMessage.innerHTML = `
+        <p class="meta">${message.username} <span>${message.time}</span></p>
+                        <p class="text">
+                            ${message.text}
+                        </p>
+                        `
+    }
     chatMessages.appendChild(newChatMessage)
     scrollToBottom(chatMessages)
 }

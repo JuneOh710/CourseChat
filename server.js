@@ -52,10 +52,10 @@ io.on('connection', socket => {
         }
         socket.join(room)
         // emit to all clients' sidebar
-        io.to(room).emit('sidebarUpdate', users)
+        io.to(room).emit('sidebarUpdate', users.filter(e => e.room === room))
         // handle user connection
         // notify user that they connected
-        socket.emit('message', formatMessage(botName, `you are connected, ${username}`))
+        socket.emit('message', formatMessage(botName, `you connected`))
         // notify everyone else that a user connected
         socket.broadcast.to(room).emit('message', formatMessage(botName, `${username} has joined the chat`))
         // handle chatMessage from user
@@ -71,7 +71,7 @@ io.on('connection', socket => {
         // send to everyone connected
         io.to(user.room).emit('message', formatMessage(botName, `${getCurrentUser(socket.id).username} has left the chat`))
         removeCurrentUser(user)
-        io.to(user.room).emit('sidebarUpdate', users)
+        io.to(user.room).emit('sidebarUpdate', users.filter(e => e.room === user.room))
     })
 })
 

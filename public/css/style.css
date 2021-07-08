@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 :root {
-	--dark-color-a: #667aff;
-	--dark-color-b: #7386ff;
-	--light-color: #e6e9ff;
+	--dark-color-a: #16697a;
+	--dark-color-b: #489fb5;
+	--light-color-a: #ede7e3;
+	--light-color-b: #82c0cc;
 	--success-color: #5cb85c;
 	--error-color: #d9534f;
 }
@@ -17,7 +18,7 @@
 body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 16px;
-	background: var(--light-color);
+	background: #fff;
 	margin: 20px;
 }
 
@@ -32,7 +33,7 @@ a {
 .btn {
 	cursor: pointer;
 	padding: 5px 15px;
-	background: var(--light-color);
+	background: #fff;
 	color: var(--dark-color-a);
 	border: 0;
 	font-size: 17px;
@@ -42,7 +43,7 @@ a {
 
 .chat-container {
 	max-width: 1100px;
-	background: #fff;
+	background:var(--light-color-a);
 	margin: 30px auto;
 	overflow: hidden;
 }
@@ -86,6 +87,9 @@ a {
 }
 
 .chat-messages {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
 	padding: 30px;
 	max-height: 500px;
 	overflow-y: scroll;
@@ -93,9 +97,22 @@ a {
 
 .chat-messages .message {
 	padding: 10px;
+	min-width: 100px;
 	margin-bottom: 15px;
-	background-color: var(--light-color);
-	border-radius: 5px;
+	background-color: #fff;
+	border-radius: 10px;
+}
+.chat-messages .message.own-message {
+	align-self: flex-end;
+	background-color: var(--light-color-b);
+}
+.chat-messages .message.bot-message {
+	align-self: center;
+	padding: 5px;
+	min-width: 30px;
+	margin-bottom: 10px;
+	background-color: var(--light-color-a);
+	color: #777;
 }
 
 .chat-messages .message .meta {
@@ -104,6 +121,9 @@ a {
 	color: var(--dark-color-b);
 	opacity: 0.7;
 	margin-bottom: 7px;
+}
+.chat-messages .message.own-message .meta {
+	color: var(--dark-color-a);
 }
 
 .chat-messages .message .meta span {
