@@ -12,6 +12,8 @@ const io = new Server(httpServer)
 
 const __dirname = path.resolve(path.dirname(decodeURI(new URL(import.meta.url).pathname)));
 app.use(express.static(path.join(__dirname, 'public')))
+// allow reading from req.body
+app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 
@@ -26,12 +28,14 @@ app.get('/', (req, res) => {
 // todo: fix this 
 app.get('/chat', (req, res) => {
     const username = req.query.username;
+    // pass in the username to define it as a global variable. 
     res.render('chat.ejs', { username })
 })
 
 // this works
 // user requests to join a chat
 app.post('/', (req, res) => {
+    // get username input from the form and turn it into a query string
     const username = encodeURIComponent(req.body.username);
     res.redirect(`/chat?username=${username}`)
 })
@@ -40,11 +44,14 @@ const socketList = [];
 // run when a client connects
 io.on('connection', socket => {
     socket.on('joinRoom', (username) => {
+        // check if username is not already taken
         if (!users.includes(username)) {
-            users.push(username)  // if not, add that user to users. 
+            // if not taken...
+            users.push(username)
             socket.username = username;
             socketList.push(socket)
         }
+        // if username was taken then do nothing and continue... 
         // emit to all clients' sidebar
         io.emit('sidebarUpdate', users)
         // handle user connection
