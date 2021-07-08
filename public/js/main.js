@@ -5,11 +5,19 @@ const socket = io()
 socket.on('message', message => {
     displayMessage(message)
 })
+// catch the sidebar updates
+socket.on('sidebarMessage', users => {
+    updateSidebar(users)
+})
+
 const chatMessages = document.querySelector('.chat-messages')
-// send to sever that this user joined this room (when the ejs renders I guess)
+// send to sever that this user joined this room 
 // a bit janky but I can send the username as the message. 
-// (username is defined as a global variable in the ejs file)
-socket.emit('joinRoom', username)
+// (username is defined as a global variable in the ejs file as long as the client doesn't send 
+// a fresh get request.)
+socket.on('connect', () => {
+    socket.emit('joinRoom', username)
+})
 
 // listen to chat form submission
 chatForm.addEventListener('submit', event => {
@@ -43,4 +51,16 @@ function scrollToBottom(chatMessages) {
 function clearAndRefocus(field) {
     field.value = '';
     field.focus()
+}
+
+function updateSidebar(users) {
+    const sidebar = document.getElementById('users')
+    const newUsers = document.createElement('div')
+    sidebar.innerHTML = '';
+    let newUsersHTML = ''
+    for (let user of users) {
+        newUsersHTML += `<li>${user}</li>`
+    }
+    newUsers.innerHTML = newUsersHTML;
+    sidebar.appendChild(newUsers)
 }

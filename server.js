@@ -27,9 +27,9 @@ app.get('/', (req, res) => {
 app.get('/chat', (req, res) => {
     // assume user doensn't send direct get request lol
     const username = req.query.username;
-    if (!users.find(user => user === username)) {
-        users.push(username)
-    }
+    // if (!users.find(user => user === username)) {
+    //     users.push(username)
+    // }
     res.render('chat.ejs', { username, users, botName, messages })
 })
 
@@ -40,28 +40,38 @@ app.post('/', (req, res) => {
     res.redirect(`/chat?username=${username}`)
 })
 
-
+const socketList = [];
 // run when a client connects
 io.on('connection', socket => {
     socket.on('joinRoom', (username) => {
-        console.log(username)
+        if (!users.includes(username)) {
+            users.push(username)  // if not, add that user to users. 
+            socket.username = username;
+            socketList.push(socket)
+        }
+        // emit to all clients' sidebar
+        io.emit('sidebarMessage', users)
         // handle user connection
         // notify user that they connected
-        socket.emit('message', formatMessage(botName, 'you are connected!'))
+        socket.emit('message', formatMessage(botName, `you are connected, ${username}`))
         // notify everyone else that a user connected
         socket.broadcast.emit('message', formatMessage(botName, `${username} has joined the chat`))
-
         // handle chatMessage from user
         socket.on('chatMessage', (msg) => {
             // send this message to every user
             io.emit('message', formatMessage(msg[0], msg[1]))
         })
-
     })
+
     // handle user disconnecting
     socket.on('disconnect', () => {
+        // modify existing users array... 
+        const i = socketList.indexOf(socket)
         // send to everyone connected
-        io.emit('message', formatMessage(botName, 'a user has left the chat'))
+        io.emit('message', formatMessage(botName, `${users[i]} has left the chat`))
+        users.splice(i, 1);
+        socketList.splice(i, 1);
+        io.emit('sidebarMessage', users)
     })
 })
 
