@@ -1,5 +1,7 @@
 import moment from 'moment'
 
+const messages = [];
+
 function formatMessage(username, text) {
     return {
         username,
@@ -8,4 +10,4 @@ function formatMessage(username, text) {
     }
 }
 
-export { formatMessage as default }
+export { formatMessage, messages }

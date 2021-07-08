@@ -5,18 +5,23 @@ const socket = io()
 socket.on('message', message => {
     displayMessage(message)
 })
+const chatMessages = document.querySelector('.chat-messages')
+// send to sever that this user joined this room (when the ejs renders I guess)
+// a bit janky but I can send the username as the message. 
+// (username is defined as a global variable in the ejs file)
+socket.emit('joinRoom', username)
+
 // listen to chat form submission
 chatForm.addEventListener('submit', event => {
     // prevent form from submitting
     event.preventDefault()
-    // set msg as [text, username]
     // where event.target.elements.msg.value is the actual text
-    const msg = [event.target.elements.msg.value, username]
+    const msg = [username, event.target.elements.msg.value]
     socket.emit('chatMessage', msg)
-    // clear message and refocus field
-    event.target.elements.msg.value = ''
-    event.target.elements.msg.focus()
+    clearAndRefocus(event.target.elements.msg)
 })
+
+
 
 function displayMessage(message) {
     const chatMessages = document.querySelector('.chat-messages')
@@ -34,4 +39,8 @@ function displayMessage(message) {
 
 function scrollToBottom(chatMessages) {
     chatMessages.scrollTop = chatMessages.scrollHeight
+}
+function clearAndRefocus(field) {
+    field.value = '';
+    field.focus()
 }
