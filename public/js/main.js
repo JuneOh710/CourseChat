@@ -23,8 +23,7 @@ chatForm.addEventListener('submit', event => {
     // prevent form from submitting
     event.preventDefault()
     // where event.target.elements.msg.value is the actual text
-    const msg = [username, event.target.elements.msg.value]
-    socket.emit('chatMessage', msg)
+    socket.emit('chatMessage', { username, text: event.target.elements.msg.value })
     clearAndRefocus(event.target.elements.msg)
 })
 
@@ -58,7 +57,7 @@ function updateSidebar(users) {
     sidebar.innerHTML = '';
     let newUsersHTML = ''
     for (let user of users) {
-        newUsersHTML += `<li>${user}</li>`
+        newUsersHTML += `<li>${user.username}</li>`
     }
     newUsers.innerHTML = newUsersHTML;
     sidebar.appendChild(newUsers)

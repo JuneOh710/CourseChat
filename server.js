@@ -3,7 +3,7 @@ import path from 'path'
 import http from 'http'
 import { Server } from 'socket.io'
 import { formatMessage } from './utils/messages.js'
-import { users, addUser, getCurrentUser } from './utils/users.js'
+import { users, addUser, getCurrentUser, removeCurrentUser } from './utils/users.js'
 
 
 const app = express()
@@ -41,46 +41,39 @@ app.post('/', (req, res) => {
     res.redirect(`/chat?username=${username}&room=${room}`)
 })
 
-const socketList = [];
 
 // run when a client connects
 io.on('connection', socket => {
     socket.on('joinRoom', ({ username, room }) => {
-        // check if username is not already taken
-        if (!users.includes(username)) {
-            // if not taken...
-            users.push(username)
-            socket.username = username;
-            socketList.push(socket)
+        // check if user is not defined
+        if (!getCurrentUser(socket.id)) {
+            // if not defined... 
+            addUser(socket.id, username, room)
         }
-        // if username was taken then do nothing and continue... 
+        socket.join(room)
         // emit to all clients' sidebar
-        io.emit('sidebarUpdate', users)
+        io.to(room).emit('sidebarUpdate', users)
         // handle user connection
         // notify user that they connected
         socket.emit('message', formatMessage(botName, `you are connected, ${username}`))
         // notify everyone else that a user connected
-        socket.broadcast.emit('message', formatMessage(botName, `${username} has joined the chat`))
+        socket.broadcast.to(room).emit('message', formatMessage(botName, `${username} has joined the chat`))
         // handle chatMessage from user
-        socket.on('chatMessage', (msg) => {
+        socket.on('chatMessage', ({ username, text }) => {
             // send this message to every user
-            io.emit('message', formatMessage(msg[0], msg[1]))
+            io.to(room).emit('message', formatMessage(username, text))
         })
     })
 
     // handle user disconnecting
     socket.on('disconnect', () => {
-        // modify existing users array... 
-        const i = socketList.indexOf(socket)
+        const user = getCurrentUser(socket.id)
         // send to everyone connected
-        io.emit('message', formatMessage(botName, `${users[i]} has left the chat`))
-        users.splice(i, 1);
-        socketList.splice(i, 1);
-        io.emit('sidebarMessage', users)
+        io.to(user.room).emit('message', formatMessage(botName, `${getCurrentUser(socket.id).username} has left the chat`))
+        removeCurrentUser(user)
+        io.to(user.room).emit('sidebarUpdate', users)
     })
 })
-
-
 
 
 const PORT = process.env.PORT || 8080;
