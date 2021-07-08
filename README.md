@@ -3,4 +3,3 @@ Used the starter files from (cough - shamelessly followed - cough) this youtube 
 
 # Note
 Instead of just serving static files, I added routes using express and used ejs as the templating language. 
-Terns out I have no idea what I'm doing so this was a fail. 
