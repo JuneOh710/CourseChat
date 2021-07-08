@@ -2,7 +2,7 @@ import express from 'express'
 import path from 'path'
 import http from 'http'
 import { Server } from 'socket.io'
-import { formatMessage, messages } from './utils/messages.js'
+import { formatMessage } from './utils/messages.js'
 import { users } from './utils/users.js'
 
 
@@ -14,7 +14,7 @@ const __dirname = path.resolve(path.dirname(decodeURI(new URL(import.meta.url).p
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
-app.use(express.urlencoded({ extended: true }));
+
 
 const botName = '[Bot]';
 
@@ -25,12 +25,8 @@ app.get('/', (req, res) => {
 
 // todo: fix this 
 app.get('/chat', (req, res) => {
-    // assume user doensn't send direct get request lol
     const username = req.query.username;
-    // if (!users.find(user => user === username)) {
-    //     users.push(username)
-    // }
-    res.render('chat.ejs', { username, users, botName, messages })
+    res.render('chat.ejs', { username })
 })
 
 // this works
@@ -50,7 +46,7 @@ io.on('connection', socket => {
             socketList.push(socket)
         }
         // emit to all clients' sidebar
-        io.emit('sidebarMessage', users)
+        io.emit('sidebarUpdate', users)
         // handle user connection
         // notify user that they connected
         socket.emit('message', formatMessage(botName, `you are connected, ${username}`))

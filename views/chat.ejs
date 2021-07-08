@@ -24,29 +24,12 @@
                 <h2 id="room-name">JavaScript</h2>
                 <h3><i class="fas fa-users"></i> Users</h3>
                 <ul id="users">
-                    <li>Brad</li>
-                    <li>John</li>
-                    <li>Mike</li>
-                    <% for( let user of users ) { %>
-                        <li>
-                            <%= user.username %>
-                        </li>
-                        <% } %>
+
+
                 </ul>
             </div>
             <div class="chat-messages">
-                <% for( let message of messages ) { %>
-                    <div class="message">
-                        <p class="meta">
-                            <%= message.username %><span>
-                                    <%= message.time%>
-                                </span>
-                        </p>
-                        <p class="text">
-                            <%= message.text %>
-                        </p>
-                    </div>
-                    <% } %>
+
             </div>
         </main>
         <!-- message box -->
@@ -54,7 +37,6 @@
             <form id="chat-form" action="/chat" method="POST">
                 <input name="msg" id="msg" type="text" placeholder="Enter Message" required autocomplete="off" />
                 <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
-                <input type="hidden" name='username' value='<%= username %>'>
             </form>
         </div>
         <script>

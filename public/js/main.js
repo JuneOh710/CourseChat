@@ -6,15 +6,14 @@ socket.on('message', message => {
     displayMessage(message)
 })
 // catch the sidebar updates
-socket.on('sidebarMessage', users => {
+socket.on('sidebarUpdate', users => {
     updateSidebar(users)
 })
 
 const chatMessages = document.querySelector('.chat-messages')
 // send to sever that this user joined this room 
 // a bit janky but I can send the username as the message. 
-// (username is defined as a global variable in the ejs file as long as the client doesn't send 
-// a fresh get request.)
+// (username is defined as a global variable in the ejs file as defined in the query.)
 socket.on('connect', () => {
     socket.emit('joinRoom', username)
 })
