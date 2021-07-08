@@ -3,7 +3,7 @@ import path from 'path'
 import http from 'http'
 import { Server } from 'socket.io'
 import { formatMessage } from './utils/messages.js'
-import { users } from './utils/users.js'
+import { users, addUser, getCurrentUser } from './utils/users.js'
 
 
 const app = express()
@@ -27,9 +27,9 @@ app.get('/', (req, res) => {
 
 // todo: fix this 
 app.get('/chat', (req, res) => {
-    const username = req.query.username;
+    const { username, room } = req.query;
     // pass in the username to define it as a global variable. 
-    res.render('chat.ejs', { username })
+    res.render('chat.ejs', { username, room })
 })
 
 // this works
@@ -37,13 +37,15 @@ app.get('/chat', (req, res) => {
 app.post('/', (req, res) => {
     // get username input from the form and turn it into a query string
     const username = encodeURIComponent(req.body.username);
-    res.redirect(`/chat?username=${username}`)
+    const room = encodeURIComponent(req.body.room)
+    res.redirect(`/chat?username=${username}&room=${room}`)
 })
 
 const socketList = [];
+
 // run when a client connects
 io.on('connection', socket => {
-    socket.on('joinRoom', (username) => {
+    socket.on('joinRoom', ({ username, room }) => {
         // check if username is not already taken
         if (!users.includes(username)) {
             // if not taken...

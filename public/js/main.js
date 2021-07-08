@@ -15,7 +15,7 @@ const chatMessages = document.querySelector('.chat-messages')
 // a bit janky but I can send the username as the message. 
 // (username is defined as a global variable in the ejs file as defined in the query.)
 socket.on('connect', () => {
-    socket.emit('joinRoom', username)
+    socket.emit('joinRoom', { username, room })
 })
 
 // listen to chat form submission
